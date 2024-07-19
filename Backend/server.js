@@ -7,7 +7,8 @@ require('dotenv').config();
 require('./Database/db_connection');
 
 // Routers
-require('./Routes/user');
+const userRoutes =  require('./Routes/user');
+app.use(userRoutes)
 
 const PORT = process.env.PORT || 3000
 //server
