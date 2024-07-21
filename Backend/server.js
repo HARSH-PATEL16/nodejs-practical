@@ -5,6 +5,7 @@ const http = require('http');
 const server = http.createServer(app);
 require('dotenv').config();
 require('./Database/db_connection');
+app.use(express.json())
 
 // Routers
 const userRoutes =  require('./Routes/user');
