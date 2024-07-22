@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('user_token', {
+    await queryInterface.createTable('user_tokens', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,7 +12,7 @@ module.exports = {
       user_id: {
         allowNull: false,
         type: Sequelize.BIGINT(20).UNSIGNED,
-        references: { model: 'user', key: 'id', as: 'user_id' },
+        references: { model: 'users', key: 'id', as: 'user_id' },
         onDelete: 'CASCADE'
       },
       access_token: {
@@ -32,6 +32,6 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
 
-    await queryInterface.dropTable('user_token');
+    await queryInterface.dropTable('user_tokens');
   }
 };
