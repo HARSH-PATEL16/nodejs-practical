@@ -14,6 +14,6 @@ router.route('/user/details').get(userController.getUserDetails);
 router.route('/user/change_password').post(userController.changePassword);
 
 // User signout
-router.route('/user/sign_out').post(userController.signOut);
+router.route('/user/sign_out').get(userController.signOut);
 
 module.exports = router;

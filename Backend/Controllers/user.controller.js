@@ -19,18 +19,22 @@ class userController {
 
             if (checkEmail) {
                 res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.EMAIL });
+                return;
             }
 
             if (!bodyData?.password) {
-                res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.PASSWORD })
+                res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.PASSWORD });
+                return;
             }
 
             if (!bodyData?.confirm_password) {
-                res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.CONFIRM_PASSWORD })
+                res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.CONFIRM_PASSWORD });
+                return;
             }
 
             if (bodyData?.password !== bodyData?.confirm_password) {
                 res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.NOT_SAME });
+                return;
             }
 
             bodyData.password = await bcrypt.hash(bodyData?.password, 10);
@@ -56,13 +60,15 @@ class userController {
             })
 
             if (!checkUser) {
-                res.status(403).send({ Message: MESSAGES.USER.NOT_REGISTERED })
+                res.status(403).send({ Message: MESSAGES.USER.NOT_REGISTERED });
+                return;
             }
 
             let checkPassword = await bcrypt.compare(bodyData?.password, checkUser?.password);
 
             if (!checkPassword) {
-                res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.INCORRECT })
+                res.status(403).send({ Message: MESSAGES.VALIDATION_MESSAGES.INCORRECT });
+                return;
             }
 
             let token = await jwt.sign({ email: bodyData?.email }, process.env.SECRET_KEY);
@@ -110,6 +116,7 @@ class userController {
         try {
             let authToken = req?.headers?.authorization
             let bodyData = req.body
+            console.log('bodyData: ', bodyData);
 
             let getUserId = await userToken.findOne({
                 where: {
@@ -125,11 +132,13 @@ class userController {
 
             let matchPassword = await bcrypt.compare(bodyData?.old_password, checkPassword?.password);
             if (!matchPassword) {
-                res.status(403).send({ Message: MESSAGES.PASSWORD.OLDINCORRECT })
+                res.status(422).send({ Message: MESSAGES.PASSWORD.OLDINCORRECT });
+                return;
             }
 
-            if (bodyData.new_password !== bodyData.confirm_new_password) {
-                res.status(403).send({ Message: MESSAGES.PASSWORD.NOT_SAME })
+            if (bodyData.new_password !== bodyData.confirm_password) {
+                res.status(422).send({ Message: MESSAGES.PASSWORD.NOT_SAME })
+                return;
             }
 
             let hashPassword = await bcrypt.hash(bodyData?.new_password, 10)
@@ -151,6 +160,7 @@ class userController {
     // Signout
     async signOut(req, res) {
         let token = req?.headers?.authorization
+        console.log('token: ', token);
 
         let deleteToken = await userToken.destroy({
             where: {
